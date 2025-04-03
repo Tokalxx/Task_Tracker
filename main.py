@@ -51,11 +51,10 @@ def read_json():
 
 
 # Method 1: Create a Task
-def create_task(name, date, status):
+def create_task(name):
     tasks = read_json()
-    new_task = Task(name, date, status)
+    new_task = Task(name, datetime.datetime.now().strftime("%d:%m:/%Y"), False)
     tasks.append(new_task.to_dict())
-
     write_json(tasks)
     print("Task created successfully")
 
@@ -77,9 +76,9 @@ def update_task(id, name):
             x["name"] = name
             print("Updated")
             write_json(tasks)
+            print("Task updated successfully")
             return
     print("Item Not Found ")
-
 
 # Method 4 - delete tasks
 def delete_task(id):
@@ -87,63 +86,60 @@ def delete_task(id):
     task_id = int(id)
     tasks = [task for task in tasks if task["id"] != task_id]
     write_json(tasks)
+    print("Task deleted successfully")
 
+# Method 5 - Complete tasks
+def complete_task(id):
+    tasks = read_json()
+    task_id = int(id)
+    for task in tasks:
+        if task["id"] == task_id:
+            task["status"] = True
+            write_json(tasks)
+            print("Task completed")
+            return
+    print("Task not found")
 
-
-while check_point:
-    display_task()
-
-    print("\n<1. Create>")
-    print("<2. Delete>")
-    print("<3. Update>")
-    print("<4. Complete Task>")
-    print("<5. Display Completed>")
-    print("<6. Display Pending>")
-
-    task_options = input("\nWhat would you like to do? ")
-
-    if task_options == "1":
-        print("Create a Task")
-        task_name = input("Enter Task ")
-        task_date = datetime.datetime.now().strftime("%d:%m:%Y")
-        create_task(task_name, task_date, False)
-
-    elif task_options == "2":
-        task_del = input("Enter the number/id of the Task to delete ")
-        delete_task(task_del)
-    elif task_options == "3":
-        task_update_id = input("Enter the number/id of the Task to update ")
-        task_update_name = input("Enter the new name of the Task to update ")
-        update_task(task_update_id, task_update_name)
-    elif task_options == "4":
-        task_completed = int(input("Enter the number/id of the Task you have completed "))
-        tasks = read_json()
-        for task in tasks:
-            if task["id"]  == task_completed:
-                task["status"] = True
-                write_json(tasks)
-    elif task_options == "5" or task_options == "6":
-        tasks = read_json()
-        for task in tasks:
-            if task["status"] == True and task_options == "5":
-                print(f"{task["id"]}: {task["name"]} (Date created: {task["date"]} - Completed)")
-            else:
-                print(f"{task["id"]}: {task["name"]} (Date created: {task["date"]} - Completed)")
-
-        
-        
-       
-
-    
-
-    
-
-    check = input("Would you like to continue(Y/N) ")
-    if check.upper() != "Y":
-        check_point = False
+# Method 6 - Filter Tasks
+def filter_tasks(status):
+    tasks = read_json()
+    for task in tasks:
+        if task["status"] == "completed" == status:
+            print(f"{task["id"]}: {task["name"]} (Date created: {task["date"]} - {task["status"]})")
+        elif task["status"] == "pending" == status:
+            print(f"{task["id"]}: {task["name"]} (Date created: {task["date"]} - {task["status"]})")
 
 
 
 
+def command_handle(cmd, params):
+    match cmd:
+        case "1":
+            create_task(params[0])
+        case "2":
+            delete_task(params[0])
+        case "3":
+            update_task(params[0], params[1])
+        case "4":
+            task_id = input("Enter")
+            complete_task(params[0])
+        case "5":
+            filter_tasks("completed")
+        case "6":
+            filter_tasks("pending")
+        case "7":
+            display_task()
 
 
+def main():
+    if len(sys.argv) < 2:
+        print("Please provide a command.")
+        sys.exit(1)
+
+    command = sys.argv[1]
+    params = sys.argv[2:]
+
+    command_handle(command, params)
+
+if __name__ == "__main__":
+    main()
