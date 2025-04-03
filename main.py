@@ -97,7 +97,7 @@ while check_point:
     print("<3. Update>")
     print("<4. Complete Task>")
 
-    task_options = input("\nWhat would you like to do?")
+    task_options = input("\nWhat would you like to do? ")
 
     if task_options == "1":
         print("Create a Task")
@@ -106,16 +106,16 @@ while check_point:
         create_task(task_name, task_date, False)
 
     elif task_options == "2":
-        task_del = input("Enter the number/id of the Task to delete")
+        task_del = input("Enter the number/id of the Task to delete ")
         delete_task(task_del)
 
     elif task_options == "3":
-        task_update_id = input("Enter the number/id of the Task to update")
-        task_update_name = input("Enter the new name of the Task to update")
+        task_update_id = input("Enter the number/id of the Task to update ")
+        task_update_name = input("Enter the new name of the Task to update ")
         update_task(task_update_id, task_update_name)
 
     else:
-        task_completed = int(input("Enter the number/id of the Task you have completed"))
+        task_completed = int(input("Enter the number/id of the Task you have completed "))
         tasks = read_json()
         for task in tasks:
             if task["id"]  == task_completed:
@@ -127,7 +127,7 @@ while check_point:
 
     
 
-    check = input("Would you like to continue(Y/N)")
+    check = input("Would you like to continue(Y/N) ")
     if check.upper() != "Y":
         check_point = False
 
