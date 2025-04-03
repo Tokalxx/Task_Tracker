@@ -53,7 +53,7 @@ def read_json():
 # Method 1: Create a Task
 def create_task(name):
     tasks = read_json()
-    new_task = Task(name, datetime.datetime.now().strftime("%d:%m:/%Y"), False)
+    new_task = Task(name, datetime.datetime.now().strftime("%d:%m:/%Y"), "todo")
     tasks.append(new_task.to_dict())
     write_json(tasks)
     print("Task created successfully")
@@ -65,7 +65,7 @@ def display_task():
         print("There are no tasks created")
     for x in tasks:
         status_text = "Completed" if x["status"] else "Pending"
-        print(f"{x["id"]}: {x["name"]} (Date created: {x["date"]} - {status_text})")
+        print(f"{x["id"]}: {x["name"]} (Date created: {x["date"]} - {x["status"]})")
 
 # Method 3 - Update the name of the tasks
 def update_task(id, name):
@@ -89,24 +89,43 @@ def delete_task(id):
     print("Task deleted successfully")
 
 # Method 5 - Complete tasks
-def complete_task(id):
+def mark_tasks(id, status):
     tasks = read_json()
     task_id = int(id)
-    for task in tasks:
-        if task["id"] == task_id:
-            task["status"] = True
-            write_json(tasks)
-            print("Task completed")
-            return
-    print("Task not found")
+    if status == "pending":
+        for task in tasks:
+            if task["id"] == task_id:
+                task["status"] = status
+                write_json(tasks)
+                print("Task completed")
+                return
+        print("Task not found")
+    elif status == "complete":
+        for task in tasks:
+            if task["id"] == task_id:
+                task["status"] = status
+                write_json(tasks)
+                print("Task completed")
+                return
+        print("Task not found")
+    elif status == "todo":
+        for task in tasks:
+            if task["id"] == task_id:
+                task["status"] = status
+                write_json(tasks)
+                print("Task completed")
+                return
+        print("Task not found")
 
 # Method 6 - Filter Tasks
 def filter_tasks(status):
     tasks = read_json()
     for task in tasks:
-        if task["status"] == "completed" == status:
+        if task["status"] == "completed" and status == "done":
             print(f"{task["id"]}: {task["name"]} (Date created: {task["date"]} - {task["status"]})")
-        elif task["status"] == "pending" == status:
+        elif task["status"] == "todo" == status:
+            print(f"{task["id"]}: {task["name"]} (Date created: {task["date"]} - {task["status"]})")
+        elif task["status"] == "pending" and status == "pending":
             print(f"{task["id"]}: {task["name"]} (Date created: {task["date"]} - {task["status"]})")
 
 
@@ -114,21 +133,22 @@ def filter_tasks(status):
 
 def command_handle(cmd, params):
     match cmd:
-        case "1":
+        case "add":
             create_task(params[0])
-        case "2":
+        case "delete":
             delete_task(params[0])
-        case "3":
+        case "update":
             update_task(params[0], params[1])
-        case "4":
-            task_id = input("Enter")
-            complete_task(params[0])
-        case "5":
-            filter_tasks("completed")
-        case "6":
-            filter_tasks("pending")
-        case "7":
-            display_task()
+        case "mark-done":
+            mark_tasks(params[0], "complete")
+        case "mark-in-progress":
+            mark_tasks(params[0], "pending")
+        case "list":
+            if len(params) == 0:
+                display_task()
+            elif len(params) >= 1:
+                filter_tasks(params[0])
+
 
 
 def main():
