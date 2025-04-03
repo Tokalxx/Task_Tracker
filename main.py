@@ -1,5 +1,6 @@
 import os
 import json
+import sys
 import datetime
 
 class Task:
@@ -96,6 +97,8 @@ while check_point:
     print("<2. Delete>")
     print("<3. Update>")
     print("<4. Complete Task>")
+    print("<5. Display Completed>")
+    print("<6. Display Pending>")
 
     task_options = input("\nWhat would you like to do? ")
 
@@ -108,19 +111,27 @@ while check_point:
     elif task_options == "2":
         task_del = input("Enter the number/id of the Task to delete ")
         delete_task(task_del)
-
     elif task_options == "3":
         task_update_id = input("Enter the number/id of the Task to update ")
         task_update_name = input("Enter the new name of the Task to update ")
         update_task(task_update_id, task_update_name)
-
-    else:
+    elif task_options == "4":
         task_completed = int(input("Enter the number/id of the Task you have completed "))
         tasks = read_json()
         for task in tasks:
             if task["id"]  == task_completed:
                 task["status"] = True
                 write_json(tasks)
+    elif task_options == "5" or task_options == "6":
+        tasks = read_json()
+        for task in tasks:
+            if task["status"] == True and task_options == "5":
+                print(f"{task["id"]}: {task["name"]} (Date created: {task["date"]} - Completed)")
+            else:
+                print(f"{task["id"]}: {task["name"]} (Date created: {task["date"]} - Completed)")
+
+        
+        
        
 
     
